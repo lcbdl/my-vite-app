@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import React, { MouseEventHandler, useRef } from "react";
 
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -7,7 +7,7 @@ export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const baseClasses =
-  "inline-flex items-center justify-center font-medium rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-60 disabled:pointer-events-none relative overflow-hidden shadow-md tracking-wider select-none";
+  "inline-flex items-center justify-center font-medium rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-60 disabled:pointer-events-none relative overflow-hidden shadow-lg tracking-wider select-none";
 
 const variantClasses: Record<NonNullable<ButtonProps["variant"]>, string> = {
   primary:
@@ -59,7 +59,7 @@ export const Button: React.FC<ButtonProps> = ({
     onClick?.(e);
   };
 
-  const classes = clsx(
+  const classes = cn(
     baseClasses,
     variantClasses[variant],
     sizeClasses[size],
