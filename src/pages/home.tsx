@@ -1,9 +1,26 @@
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, MenuItemType } from "@/components/ui/dropdown-menu";
+import { Globe } from "lucide-react";
 
 const HomePage = () => {
+  const menuItems: MenuItemType[] = [
+    { label: "Game", href: "/game" },
+    { label: "About", href: "/about" },
+  ];
   return (
     <div>
       <h1>Home page</h1>
+      <div className="flex flex-col-3 gap-2">
+        <DropdownMenu
+          trigger={
+            <>
+              <Globe size={14} className="mr-2" />
+              <span>English</span>
+            </>
+          }
+          menuItems={menuItems}
+        ></DropdownMenu>
+      </div>
       <div>
         <h2>Button</h2>
         <Button variant="primary">Primary</Button>
