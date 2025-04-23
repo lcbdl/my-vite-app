@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, MenuItemType } from "@/components/ui/dropdown-menu";
 import { Globe } from "lucide-react";
+import { Link } from "react-router";
 
 const HomePage = () => {
   const menuItems: MenuItemType[] = [
@@ -18,8 +19,20 @@ const HomePage = () => {
               <span>English</span>
             </>
           }
-          menuItems={menuItems}
-        ></DropdownMenu>
+        >
+          <ul>
+            {menuItems.map(({ label, href }, index) => (
+              <li key={index} className="my-3">
+                <Link
+                  to={href}
+                  className="cursor-pointer font-semibold hover:text-blue-500 hover:underline select-none"
+                >
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </DropdownMenu>
       </div>
       <div>
         <h2>Button</h2>

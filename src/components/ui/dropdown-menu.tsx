@@ -1,16 +1,15 @@
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
 import { isValidElement, ReactElement, useState } from "react";
-import { Link } from "react-router";
 
 interface DropdownMenuProps {
   trigger: string | ReactElement | (() => ReactElement);
-  menuItems: MenuItemType[];
+  children: ReactElement;
 }
 
 interface DropdownMenuContentProps {
   expanded: boolean;
-  menuItems: MenuItemType[];
+  children: ReactElement;
 }
 
 export interface MenuItemType {
@@ -18,7 +17,7 @@ export interface MenuItemType {
   href: string;
 }
 
-export const DropdownMenu = ({ trigger, menuItems }: DropdownMenuProps) => {
+export const DropdownMenu = ({ trigger, children }: DropdownMenuProps) => {
   let triggerElem: ReactElement;
 
   if (typeof trigger === "string") {
@@ -39,10 +38,7 @@ export const DropdownMenu = ({ trigger, menuItems }: DropdownMenuProps) => {
       <DropdownMenuTrigger expanded={expanded} setExpanded={setExpanded}>
         {triggerElem}
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        menuItems={menuItems}
-        expanded={expanded}
-      ></DropdownMenuContent>
+      <DropdownMenuContent expanded={expanded}>{children}</DropdownMenuContent>
     </div>
   );
 };
@@ -80,7 +76,7 @@ const DropdownMenuTrigger = ({
 
 const DropdownMenuContent = ({
   expanded,
-  menuItems,
+  children,
 }: DropdownMenuContentProps) => {
   return (
     <div
@@ -89,18 +85,7 @@ const DropdownMenuContent = ({
         expanded ? "opacity-100" : "pointer-events-none opacity-0"
       )}
     >
-      <ul>
-        {menuItems.map(({ label, href }, index) => (
-          <li key={index} className="my-3">
-            <Link
-              to={href}
-              className="cursor-pointer font-semibold hover:text-blue-500 hover:underline select-none"
-            >
-              {label}
-            </Link>
-          </li>
-        ))}
-      </ul>
+      {children}
     </div>
   );
 };
