@@ -10,13 +10,10 @@ const baseClasses =
   "inline-flex items-center justify-center font-medium rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-60 disabled:pointer-events-none relative overflow-hidden shadow-lg tracking-wider select-none";
 
 const variantClasses: Record<NonNullable<ButtonProps["variant"]>, string> = {
-  primary:
-    "bg-blue-700 text-white hover:bg-blue-800 focus-visible:ring-blue-500",
-  secondary:
-    "bg-gray-300 text-gray-900 hover:bg-gray-400 focus-visible:ring-gray-500",
+  primary: "bg-blue-700 text-white hover:bg-blue-800 focus-visible:ring-blue-500",
+  secondary: "bg-gray-300 text-gray-900 hover:bg-gray-400 focus-visible:ring-gray-500",
   danger: "bg-red-700 text-white hover:bg-red-800 focus-visible:ring-red-500",
-  ghost:
-    "bg-transparent text-gray-800 hover:bg-gray-200 focus-visible:ring-gray-400",
+  ghost: "bg-transparent text-gray-800 hover:bg-gray-200 focus-visible:ring-gray-400",
 };
 
 const sizeClasses: Record<NonNullable<ButtonProps["size"]>, string> = {
@@ -50,8 +47,7 @@ export const Button: React.FC<ButtonProps> = ({
     ripple.style.left = `${x}px`;
     ripple.style.top = `${y}px`;
     ripple.style.width = ripple.style.height = `${size}px`;
-    ripple.className =
-      "pointer-events-none bg-white/60 opacity-75 rounded-full animate-ripple";
+    ripple.className = "pointer-events-none bg-white/60 opacity-75 rounded-full animate-ripple";
     button.appendChild(ripple);
     ripple.addEventListener("animationend", () => {
       ripple.remove();
@@ -59,12 +55,7 @@ export const Button: React.FC<ButtonProps> = ({
     onClick?.(e);
   };
 
-  const classes = cn(
-    baseClasses,
-    variantClasses[variant],
-    sizeClasses[size],
-    className
-  );
+  const classes = cn(baseClasses, variantClasses[variant], sizeClasses[size], className);
 
   return (
     <button

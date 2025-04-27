@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { NumberInput } from "@/components/ui/date-time-input";
 import { DropdownMenu, MenuItemType } from "@/components/ui/dropdown-menu";
 import { Globe } from "lucide-react";
 import { Link } from "react-router";
@@ -11,7 +12,7 @@ const HomePage = () => {
   return (
     <div>
       <h1>Home page</h1>
-      <div className="flex flex-col-3 gap-2">
+      <div className="flex-col-3 flex gap-2">
         <DropdownMenu
           trigger={
             <>
@@ -25,7 +26,7 @@ const HomePage = () => {
               <li key={index} className="my-3">
                 <Link
                   to={href}
-                  className="cursor-pointer font-semibold hover:text-blue-500 hover:underline select-none"
+                  className="cursor-pointer font-semibold select-none hover:text-blue-500 hover:underline"
                 >
                   {label}
                 </Link>
@@ -55,6 +56,14 @@ const HomePage = () => {
         <Button variant="ghost" disabled>
           Ghost
         </Button>
+      </div>
+      <div>
+        <h2>Number inputs</h2>
+        <div className="flex gap-2">
+          <NumberInput type="day" />
+          <NumberInput type="month" />
+          <NumberInput type="year" />
+        </div>
       </div>
     </div>
   );
