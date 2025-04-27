@@ -12,6 +12,12 @@ const fr: typeof en = {
         friday: { label: "Ven", shortLabel: "Ve", value: "Vendredi" },
         saturday: { label: "Sam", shortLabel: "Sa", value: "Samedi" },
       },
+      year: "Année",
+      month: "Mois",
+      day: "Jour",
+      hour: "Heure",
+      minute: "Minute",
+      second: "Seconde",
     },
   },
 };
