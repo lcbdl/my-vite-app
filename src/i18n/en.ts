@@ -16,6 +16,7 @@ const en = {
       hour: "Hour",
       minute: "Minute",
       second: "Second",
+      invalidDateFormat: "Invalid date format, please use {{format}}",
     },
   },
 };

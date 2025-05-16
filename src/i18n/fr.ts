@@ -18,6 +18,7 @@ const fr: typeof en = {
       hour: "Heure",
       minute: "Minute",
       second: "Seconde",
+      invalidDateFormat: "Format de date invalide, veuillez utiliser {{format}}",
     },
   },
 };
