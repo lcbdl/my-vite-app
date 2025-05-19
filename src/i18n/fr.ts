@@ -3,7 +3,7 @@ import en from "./en";
 const fr: typeof en = {
   translation: {
     calendar: {
-      weekdays: {
+      weekday: {
         sunday: { label: "Dim", shortLabel: "Di", value: "Dimanche" },
         monday: { label: "Lun", shortLabel: "Lu", value: "Lundi" },
         tuesday: { label: "Mar", shortLabel: "Ma", value: "Mardi" },

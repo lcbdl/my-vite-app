@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { DateInput } from "@/components/ui/date-time/date-input";
+import { DatePicker } from "@/components/ui/date-time/date-picker";
 import { TimeInput } from "@/components/ui/date-time/time-input";
 import { DropdownMenu, MenuItemType } from "@/components/ui/dropdown-menu";
 import { Globe } from "lucide-react";
@@ -82,6 +83,25 @@ const HomePage = () => {
               <div>
                 <h3>Disabled</h3>
                 <DateInput name="DOB" value="2025-04-23" disabled />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="grid w-full grid-cols-1 gap-6">
+          <div>
+            <h2 className="mb-3">Date Picker</h2>
+            <div className="my-3 grid grid-cols-3 items-center gap-4 rounded-lg border border-solid border-gray-500 p-5 shadow-lg shadow-gray-500/25">
+              <div>
+                <h3>Normal</h3>
+                <DatePicker name="DOB" />
+              </div>
+              <div>
+                <h3>With initial value</h3>
+                <DatePicker name="DOB" value="2025-04-23" />
+              </div>
+              <div>
+                <h3>Disabled</h3>
+                <DatePicker name="DOB" value="2025-04-23" disabled />
               </div>
             </div>
           </div>

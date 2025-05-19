@@ -1,7 +1,7 @@
 const en = {
   translation: {
     calendar: {
-      weekdays: {
+      weekday: {
         sunday: { label: "Sun", shortLabel: "Su", value: "Sunday" },
         monday: { label: "Mon", shortLabel: "Mo", value: "Monday" },
         tuesday: { label: "Tue", shortLabel: "Tu", value: "Tuesday" },

@@ -1,5 +1,5 @@
 import { cn, zeroPad } from "@/lib/utils";
-import React, { ChangeEvent, FocusEvent, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, FocusEvent, useEffect, useMemo, useRef, useState } from "react";
 
 export type DateTimeNumberInputProps = {
   min: number;
@@ -34,17 +34,22 @@ export const DateTimeNumberInput = ({
   const spanRef = useRef<HTMLSpanElement>(null);
 
   const [internalValue, setInternalValue] = useState(value);
-
+  const displayValue = useMemo(
+    () => (internalValue === undefined ? pattern : zeroPad(internalValue, pattern.length)),
+    [internalValue, pattern],
+  );
   const regx = new RegExp(`^(?:${pattern})?(\\d+)$`);
 
   useEffect(() => {
     setInternalValue(value);
-    const strVal = getDisplayValue();
+  }, [value]);
+
+  useEffect(() => {
     if (inputRef.current && spanRef.current) {
-      spanRef.current.textContent = strVal;
+      spanRef.current.textContent = displayValue;
       inputRef.current.style.width = `${spanRef.current.offsetWidth + 2}px`;
     }
-  }, [value, pattern]);
+  }, [displayValue]);
 
   const updateValue = (v?: number) => {
     if (disabled) return;
@@ -55,25 +60,24 @@ export const DateTimeNumberInput = ({
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const match = e.target.value.match(regx);
+    const inputValue = e.target.value;
+    const digitsValue = inputValue.replace(/\D/g, "");
 
-    const input = match ? match[1] : null;
-
-    if (input === null) {
+    if (digitsValue === null) {
       updateValue(undefined);
       return;
     }
 
     const currentValue = value;
     if (currentValue === undefined) {
-      const newValue = input;
+      const newValue = digitsValue;
       const numeric = parseInt(newValue, 10);
       if (!isNaN(numeric) && numeric >= min && numeric <= max) {
         updateValue(numeric);
         return;
       }
     } else {
-      const newText = input.slice(0 - pattern.length);
+      const newText = digitsValue.slice(0 - pattern.length);
       const numeric = parseInt(newText, 10);
       if (!isNaN(numeric)) {
         if (numeric >= min && numeric <= max) {
@@ -123,8 +127,6 @@ export const DateTimeNumberInput = ({
     onFocus?.(e);
   };
 
-  const getDisplayValue = () => (internalValue === undefined ? pattern : zeroPad(internalValue, pattern.length));
-
   return (
     <div className="relative inline-block">
       <input
@@ -139,7 +141,7 @@ export const DateTimeNumberInput = ({
         aria-disabled={disabled}
         aria-label={label}
         disabled={disabled}
-        value={getDisplayValue()}
+        value={displayValue}
         onFocus={handleOnFocus}
         onBlur={onBlur}
         onKeyDown={handleKeyDown}
@@ -162,7 +164,7 @@ export const DateTimeNumberInput = ({
           font: "inherit",
         }}
       >
-        {getDisplayValue()}
+        {displayValue}
       </span>
     </div>
   );

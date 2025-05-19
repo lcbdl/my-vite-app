@@ -46,12 +46,12 @@ describe("DateTimeNumberInput", () => {
     expect(onChange).toHaveBeenCalledWith(9);
   });
 
-  it("calls onChange with undefined on invalid input", () => {
+  it("does not call onChange on invalid input", () => {
     const onChange = vi.fn();
     const { getByRole } = render(<DateTimeNumberInput {...defaultProps} value={12} onChange={onChange} />);
     const input = getByRole("textbox") as HTMLInputElement;
     fireEvent.change(input, { target: { value: "ab" } });
-    expect(onChange).toHaveBeenCalledWith(undefined);
+    expect(onChange).not.toHaveBeenCalled();
   });
 
   it("handles ArrowUp and ArrowDown keys", () => {
