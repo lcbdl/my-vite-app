@@ -49,3 +49,14 @@ export const daysInMonth = (month?: number, year?: number): number => {
   const date = new Date(year, month, 0);
   return date.getDate();
 };
+
+export const getFocusableElements = (container: HTMLElement) => {
+  return Array.from(
+    container.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'),
+  ).filter((el) => {
+    const isDisabled = el.hasAttribute("disabled");
+    const ariaDisabled = el.getAttribute("aria-disabled") === "true";
+    const minusTabIndex = el.getAttribute("tabindex") === "-1";
+    return !isDisabled && !ariaDisabled && !minusTabIndex;
+  });
+};
