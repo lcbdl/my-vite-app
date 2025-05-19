@@ -1,5 +1,5 @@
+import i18n from "@/i18n/i18n";
 import { cn, zeroPad } from "@/lib/utils";
-import i18next from "i18next";
 import { FocusEvent, FormEventHandler, useEffect, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { DateTimeNumberInput } from "./date-time-number-input";
@@ -102,14 +102,14 @@ export const TimeInput = ({
           if (e.key === "ArrowLeft") {
             e.preventDefault();
             const target = e.target as HTMLSpanElement;
-            const prev = target.previousElementSibling;
+            const prev = target.parentElement?.previousElementSibling?.firstChild;
             if (prev) {
               (prev as HTMLSpanElement).focus();
             }
           } else if (e.key === "ArrowRight") {
             e.preventDefault();
             const target = e.target as HTMLSpanElement;
-            const next = target.nextElementSibling;
+            const next = target.parentElement?.nextElementSibling?.firstChild;
             if (next) {
               (next as HTMLSpanElement).focus();
             }
@@ -119,10 +119,9 @@ export const TimeInput = ({
         <DateTimeNumberInput
           disabled={disabled}
           tabIndex={0}
-          className="after:content-[':']"
           min={0}
           max={23}
-          label={i18next.t("calendar.hour")}
+          label={i18n.t("calendar.hour")}
           value={hour}
           textValue={hour === undefined ? "HH" : zeroPad(hour!, 2)}
           pattern="HH"
@@ -133,11 +132,12 @@ export const TimeInput = ({
           }}
           onBlur={() => setFocused(false)}
         />
+        :
         <DateTimeNumberInput
           disabled={disabled}
           min={0}
           max={59}
-          label={i18next.t("calendar.minute")}
+          label={i18n.t("calendar.minute")}
           value={minute}
           textValue={minute === undefined ? "mm" : zeroPad(minute!, 2)}
           pattern="mm"

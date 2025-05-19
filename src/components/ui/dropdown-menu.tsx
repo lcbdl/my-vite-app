@@ -74,15 +74,12 @@ const DropdownMenuTrigger = ({
   );
 };
 
-const DropdownMenuContent = ({
-  expanded,
-  children,
-}: DropdownMenuContentProps) => {
+const DropdownMenuContent = ({ expanded, children }: DropdownMenuContentProps) => {
   return (
     <div
       className={cn(
-        "absolute right-[-25px] block rounded-md border border-solid border-gray-400 bg-white px-4 text-sm whitespace-nowrap transition-all duration-500 before:absolute before:top-[-9px] before:right-[1.5rem] before:h-[16px] before:w-[16px] before:rotate-45 before:transform before:border-t-1 before:border-l-1 before:border-solid before:border-gray-400 before:bg-white before:content-[''] z-50",
-        expanded ? "opacity-100" : "pointer-events-none opacity-0"
+        "absolute right-[-25px] z-50 block rounded-md border border-solid border-gray-400 bg-white px-4 text-sm whitespace-nowrap transition-all duration-500 before:absolute before:top-[-9px] before:right-[1.5rem] before:h-[16px] before:w-[16px] before:rotate-45 before:transform before:border-t-1 before:border-l-1 before:border-solid before:border-gray-400 before:bg-white before:content-['']",
+        expanded ? "opacity-100" : "pointer-events-none opacity-0",
       )}
     >
       {children}

@@ -1,8 +1,5 @@
 import { cn, zeroPad } from "@/lib/utils";
-import { FocusEvent, useEffect, useRef, useState } from "react";
-import { v4 as uuid } from "uuid";
-
-export type DateTimeFieldType = "month" | "day" | "year" | "hour" | "minute";
+import React, { ChangeEvent, FocusEvent, useEffect, useRef, useState } from "react";
 
 export type DateTimeNumberInputProps = {
   min: number;
@@ -14,8 +11,8 @@ export type DateTimeNumberInputProps = {
   tabIndex?: number;
   onChange?: (value?: number) => void;
   className?: string;
-  onFocus?: (e: FocusEvent<HTMLSpanElement, Element>) => void;
-  onBlur?: (e: FocusEvent<HTMLSpanElement, Element>) => void;
+  onFocus?: (e: FocusEvent<HTMLInputElement, Element>) => void;
+  onBlur?: (e: FocusEvent<HTMLInputElement, Element>) => void;
   disabled?: boolean;
 };
 
@@ -24,177 +21,149 @@ export const DateTimeNumberInput = ({
   max,
   pattern,
   label,
-  value: valueProp,
+  value,
   textValue,
-  tabIndex,
+  tabIndex = -1,
   onChange,
   className,
   onFocus,
   onBlur,
   disabled = false,
 }: DateTimeNumberInputProps) => {
-  const id = uuid();
-  const [value, setValue] = useState(valueProp);
-  const ref = useRef<HTMLSpanElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const spanRef = useRef<HTMLSpanElement>(null);
+
+  const [internalValue, setInternalValue] = useState(value);
+
+  const regx = new RegExp(`^(?:${pattern})?(\\d+)$`);
 
   useEffect(() => {
-    setValue(valueProp);
-  }, [valueProp]);
+    setInternalValue(value);
+    const strVal = getDisplayValue();
+    if (inputRef.current && spanRef.current) {
+      spanRef.current.textContent = strVal;
+      inputRef.current.style.width = `${spanRef.current.offsetWidth + 2}px`;
+    }
+  }, [value, pattern]);
 
   const updateValue = (v?: number) => {
     if (disabled) return;
-    setValue(v);
-    onChange?.(v);
+    if (!(internalValue === v)) {
+      setInternalValue(v);
+      onChange?.(v);
+    }
   };
 
-  const strValue = value === undefined ? pattern : zeroPad(value, pattern.length);
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const match = e.target.value.match(regx);
+
+    const input = match ? match[1] : null;
+
+    if (input === null) {
+      updateValue(undefined);
+      return;
+    }
+
+    const currentValue = value;
+    if (currentValue === undefined) {
+      const newValue = input;
+      const numeric = parseInt(newValue, 10);
+      if (!isNaN(numeric) && numeric >= min && numeric <= max) {
+        updateValue(numeric);
+        return;
+      }
+    } else {
+      const newText = input.slice(0 - pattern.length);
+      const numeric = parseInt(newText, 10);
+      if (!isNaN(numeric)) {
+        if (numeric >= min && numeric <= max) {
+          updateValue(numeric);
+          return;
+        } else if (numeric > max) {
+          const newNum = numeric % 10;
+          if (newNum >= min && newNum <= max) {
+            updateValue(newNum);
+            return;
+          }
+        }
+      }
+    }
+    updateValue(currentValue);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (disabled) return;
+
+    switch (e.key) {
+      case "Backspace":
+      case "Delete": {
+        updateValue(undefined);
+        e.preventDefault();
+        break;
+      }
+      case "ArrowUp": {
+        const next = (value ?? 0) + 1;
+        if (next <= max) onChange?.(next);
+        e.preventDefault();
+        break;
+      }
+      case "ArrowDown": {
+        const next = (value ?? 0) - 1;
+        if (next >= min) onChange?.(next);
+        e.preventDefault();
+      }
+    }
+  };
+
+  const handleOnFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (disabled) return;
+    if (inputRef.current) {
+      inputRef.current.select();
+    }
+    onFocus?.(e);
+  };
+
+  const getDisplayValue = () => (internalValue === undefined ? pattern : zeroPad(internalValue, pattern.length));
 
   return (
-    <>
-      <span
-        id={id}
-        ref={ref}
-        aria-labelledby={id}
-        aria-readonly={disabled}
+    <div className="relative inline-block">
+      <input
+        ref={inputRef}
+        type="text"
+        pattern="\d*"
+        tabIndex={disabled ? -1 : (tabIndex ?? 0)}
         aria-valuemin={min}
         aria-valuemax={max}
-        aria-valuetext={textValue}
-        aria-label={label}
-        aria-disabled={disabled}
         aria-valuenow={value}
-        tabIndex={disabled ? -1 : (tabIndex ?? -1)}
-        contentEditable={!disabled}
-        role="spinbutton"
-        autoCapitalize="off"
-        inputMode={disabled ? "none" : "numeric"}
+        aria-valuetext={textValue}
+        aria-disabled={disabled}
+        aria-label={label}
+        disabled={disabled}
+        value={getDisplayValue()}
+        onFocus={handleOnFocus}
+        onBlur={onBlur}
+        onKeyDown={handleKeyDown}
+        onChange={handleChange}
+        size={pattern.length}
         className={cn(
-          "border-none bg-white focus:border-none focus:ring-0 focus:outline-none disabled:pointer-events-none disabled:opacity-70",
+          "border-none bg-white text-center focus:border-none focus:ring-0 focus:outline-none disabled:pointer-events-none disabled:opacity-70",
           {
             "pointer-events-none opacity-70": disabled,
           },
           className,
         )}
-        onFocus={(e) => {
-          if (disabled) return;
-          if (ref.current) {
-            const range = document.createRange();
-            range.selectNodeContents(ref.current);
-            const selection = window.getSelection();
-            selection?.removeAllRanges();
-            selection?.addRange(range);
-          }
-          onFocus?.(e);
-        }}
-        onBlur={(e) => !disabled && onBlur && onBlur?.(e)}
-        onBeforeInput={(e) => {
-          if (disabled) {
-            e.preventDefault();
-            return;
-          }
-          const input = (e.nativeEvent as InputEvent).data || "";
-          if (!/^\d*$/.test(input)) {
-            e.preventDefault();
-            return;
-          }
-          if (input === "") {
-            // Handle backspace or delete
-            updateValue(undefined);
-            e.preventDefault();
-            return;
-          }
-          const currentValue = value;
-          if (currentValue === undefined) {
-            const newValue = input;
-            const numeric = parseInt(newValue, 10);
-            if (!isNaN(numeric) && numeric >= min && numeric <= max) {
-              updateValue(numeric);
-            }
-          } else {
-            const currentText = currentValue.toString();
-            const newText = currentText + input;
-            const numeric = parseInt(newText, 10);
-            if (!isNaN(numeric) && numeric >= min && numeric <= max) {
-              updateValue(numeric);
-            } else {
-              const numeric2 = parseInt(input, 10);
-              if (!isNaN(numeric2) && numeric2 >= min && numeric2 <= max) {
-                updateValue(numeric2);
-              }
-            }
-          }
-          e.preventDefault();
-        }}
-        onPaste={(e) => {
-          if (disabled) {
-            e.preventDefault();
-            return;
-          }
-          // @ts-expect-error for older browsers
-          const paste = (e.clipboardData || window.clipboardData).getData("text");
-          const digitsOnly = paste.replace(/\D/g, "").substring(0, pattern.length);
-          const currentValue = value;
-          if (currentValue === undefined) {
-            const numeric = parseInt(digitsOnly, 10);
-            if (!isNaN(numeric) && numeric >= min && numeric <= max) {
-              updateValue(numeric);
-            }
-          } else {
-            const currentText = currentValue.toString();
-            const newText = currentText + digitsOnly;
-            const numeric = parseInt(newText, 10);
-            if (!isNaN(numeric) && numeric >= min && numeric <= max) {
-              updateValue(numeric);
-            } else {
-              const numeric2 = parseInt(digitsOnly, 10);
-              if (!isNaN(numeric2) && numeric2 >= min && numeric2 <= max) {
-                updateValue(numeric2);
-              }
-            }
-          }
-          e.preventDefault();
-        }}
-        onKeyDown={(e) => {
-          if (disabled) {
-            e.preventDefault();
-            return;
-          }
-          const allowedKeys = ["ArrowLeft", "ArrowRight", "Tab", "Home", "End"];
-          if (
-            allowedKeys.includes(e.key) ||
-            e.ctrlKey ||
-            e.metaKey // allow copy/paste/etc
-          ) {
-            return;
-          }
-          if (["Backspace", "Delete"].includes(e.key)) {
-            e.preventDefault();
-            updateValue(undefined);
-            return;
-          }
-          if (e.key === "ArrowUp") {
-            e.preventDefault();
-            const newValue = (value || 0) + 1;
-            if (newValue <= max) {
-              updateValue(newValue);
-            }
-            return;
-          }
-          if (e.key === "ArrowDown") {
-            e.preventDefault();
-            const newValue = (value || 0) - 1;
-            if (newValue >= min) {
-              updateValue(newValue);
-            }
-            return;
-          }
-          // Allow only digits
-          if (e.key.length === 1 && !/^\d$/.test(e.key)) {
-            e.preventDefault();
-          }
+      />
+      <span
+        ref={spanRef}
+        style={{
+          position: "absolute",
+          visibility: "hidden",
+          whiteSpace: "pre",
+          font: "inherit",
         }}
       >
-        {strValue}
+        {getDisplayValue()}
       </span>
-    </>
+    </div>
   );
 };

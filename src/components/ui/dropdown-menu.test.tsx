@@ -7,7 +7,7 @@ describe("DropdownMenu", () => {
     render(
       <DropdownMenu trigger="Menu">
         <div>Menu Content</div>
-      </DropdownMenu>
+      </DropdownMenu>,
     );
 
     expect(screen.getByText("Menu")).toBeInTheDocument();
@@ -17,7 +17,7 @@ describe("DropdownMenu", () => {
     render(
       <DropdownMenu trigger={<button>Menu Button</button>}>
         <div>Menu Content</div>
-      </DropdownMenu>
+      </DropdownMenu>,
     );
 
     expect(screen.getByText("Menu Button")).toBeInTheDocument();
@@ -27,7 +27,7 @@ describe("DropdownMenu", () => {
     render(
       <DropdownMenu trigger={() => <button>Menu Function</button>}>
         <div>Menu Content</div>
-      </DropdownMenu>
+      </DropdownMenu>,
     );
 
     expect(screen.getByText("Menu Function")).toBeInTheDocument();
@@ -37,7 +37,7 @@ describe("DropdownMenu", () => {
     render(
       <DropdownMenu trigger="Menu">
         <div>Menu Content</div>
-      </DropdownMenu>
+      </DropdownMenu>,
     );
 
     const trigger = screen.getByText("Menu");
@@ -47,7 +47,7 @@ describe("DropdownMenu", () => {
       () => {
         expect(screen.getByText("Menu Content")).toHaveClass("opacity-100");
       },
-      { timeout: 300 }
+      { timeout: 300 },
     );
 
     fireEvent.click(trigger);
@@ -55,7 +55,7 @@ describe("DropdownMenu", () => {
       () => {
         expect(screen.getByText("Menu Content")).toHaveClass("opacity-0");
       },
-      { timeout: 300 }
+      { timeout: 300 },
     );
   });
 
@@ -63,7 +63,7 @@ describe("DropdownMenu", () => {
     render(
       <DropdownMenu trigger="Menu">
         <div>Menu Content</div>
-      </DropdownMenu>
+      </DropdownMenu>,
     );
 
     const dropdown = screen.getByText("Menu Content").parentElement;
@@ -75,7 +75,7 @@ describe("DropdownMenu", () => {
       () => {
         expect(dropdown).toHaveClass("opacity-100");
       },
-      { timeout: 300 }
+      { timeout: 300 },
     );
 
     fireEvent.mouseLeave(dropdown!);
@@ -83,15 +83,13 @@ describe("DropdownMenu", () => {
   });
 
   it("throws an error for invalid trigger type", () => {
-    const consoleErrorSpy = vi
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     expect(() =>
       render(
         <DropdownMenu trigger={123 as never}>
           <div>Menu Content</div>
-        </DropdownMenu>
-      )
+        </DropdownMenu>,
+      ),
     ).toThrow("Invalid trigger type");
     consoleErrorSpy.mockRestore();
   });

@@ -1,7 +1,7 @@
 import i18n from "@/i18n/i18n";
 import { cn, daysInMonth, toOrdinal, zeroPad } from "@/lib/utils";
 import dayjs from "dayjs";
-import { FocusEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { FocusEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { DateTimeNumberInput } from "./date-time-number-input";
 
@@ -21,6 +21,16 @@ const MONTHS = [
   "november",
   "december",
 ];
+
+export type DateFieldMetaType = {
+  type: "year" | "month" | "day";
+  min: number;
+  max: number;
+  label: string;
+  value: number;
+  textValue: string;
+  pattern: string;
+};
 
 export type DateInputProps = {
   id?: string;
@@ -88,21 +98,8 @@ export const DateInput = ({
     return { year, month, day };
   };
 
-  ////////////////// Memos ////////////////////////
-  const parsedPattern = useMemo<{
-    isValidPattern: boolean;
-    parts?: {
-      type: "year" | "month" | "day";
-      min: number;
-      max: number;
-      label: string;
-      value?: number;
-      textValue?: string;
-      pattern: "YYYY" | "MM" | "DD";
-    }[];
-    separator?: string;
-  }>(() => {
-    const match = pattern.match(regex);
+  const parsePattern = (patternStr: string, yearVal?: number, monthVal?: number, dayVal?: number) => {
+    const match = patternStr.match(regex);
     if (!match) return { isValidPattern: false };
     const parts = [match[1], match[3], match[4]];
     const uniqueParts = new Set(parts);
@@ -116,33 +113,33 @@ export const DateInput = ({
             min: 1,
             max: 2199,
             label: i18n.t("calendar.year"),
-            value: year,
-            textValue: year === undefined ? "" : `${year}`,
+            value: yearVal,
+            textValue: yearVal === undefined ? "" : `${yearVal}`,
             pattern: "YYYY",
-          };
+          } as DateFieldMetaType;
         if (p === "MM")
           return {
             type: "month",
             min: 1,
             max: 12,
             label: i18n.t("calendar.month"),
-            value: month,
-            textValue: month == undefined ? undefined : i18n.t(`calendar.months.${MONTHS[month ?? 1]}.value`),
+            value: monthVal,
+            textValue: monthVal == undefined ? undefined : i18n.t(`calendar.months.${MONTHS[monthVal ?? 1]}.value`),
             pattern: "MM",
-          };
+          } as DateFieldMetaType;
         return {
           type: "day",
           min: 1,
-          max: daysInMonth(month, year),
+          max: daysInMonth(monthVal, yearVal),
           label: i18n.t("calendar.day"),
-          value: day,
-          textValue: toOrdinal(day),
+          value: dayVal,
+          textValue: toOrdinal(dayVal),
           pattern: "DD",
-        };
+        } as DateFieldMetaType;
       }),
       separator: match[2],
     };
-  }, [pattern, year, month, day]);
+  };
 
   const handleDateChange = (type: "year" | "month" | "day", num: number) => {
     const newYear = type === "year" ? num : year;
@@ -156,27 +153,31 @@ export const DateInput = ({
     setMonth(newMonth);
     setDay(newDay);
     if (inputRef.current) {
-      inputRef.current.value = dateStrValue;
+      const newDateStr = getDateStrValue(newYear, newMonth, newDay);
+      inputRef.current.value = newDateStr;
       inputRef.current.dispatchEvent(new InputEvent("input", { bubbles: true }));
       inputRef.current.dispatchEvent(new Event("change", { bubbles: true }));
-      onChange?.(dateStrValue);
+      onChange?.(newDateStr);
     }
   };
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const dateStrValue = useMemo(() => {
-    const parts = parsedPattern.parts;
-    if ((parts?.filter((p) => p.value === undefined).length ?? 0) === 3) {
+  const getDateStrValue = (year?: number, month?: number, day?: number) => {
+    if (year === undefined && month === undefined && day === undefined) {
       return "";
     } else {
+      const parsedPattern = parsePattern(pattern, year, month, day);
       return (
-        (parts ?? [])
+        (parsedPattern.parts ?? [])
           .map((p) => (p.value === undefined ? p.pattern : zeroPad(p.value, p.pattern.length)))
           .join(parsedPattern.separator) ?? "-"
       );
     }
-  }, [parsedPattern]);
+  };
+
+  const parsedPattern = parsePattern(pattern, year, month, day);
+
   return (
     <div
       id={idProp}
@@ -203,29 +204,24 @@ export const DateInput = ({
             onKeyDown={(e) => {
               if (e.key === "ArrowLeft") {
                 e.preventDefault();
-                const target = e.target as HTMLSpanElement;
-                const prev = target.previousElementSibling;
+                const target = e.target as HTMLInputElement;
+                const prev = target.parentElement?.previousElementSibling?.firstChild;
                 if (prev) {
-                  (prev as HTMLSpanElement).focus();
+                  (prev as HTMLInputElement).focus();
                 }
               } else if (e.key === "ArrowRight") {
                 e.preventDefault();
-                const target = e.target as HTMLSpanElement;
-                const next = target.nextElementSibling;
+                const target = e.target as HTMLInputElement;
+                const next = target.parentElement?.nextElementSibling?.firstChild;
                 if (next) {
-                  (next as HTMLSpanElement).focus();
+                  (next as HTMLInputElement).focus();
                 }
               }
             }}
           >
             <DateTimeNumberInput
-              // type={pattern.parts![0].type}
               disabled={disabled}
               tabIndex={0}
-              className={cn({
-                "after:content-['-']": parsedPattern.separator === "-",
-                "after:content-['/']": parsedPattern.separator === "/",
-              })}
               min={parsedPattern.parts![0].min}
               max={parsedPattern.parts![0].max}
               label={parsedPattern.parts![0].label}
@@ -239,13 +235,9 @@ export const DateInput = ({
               }}
               onBlur={() => setFocused(false)}
             />
+            {parsedPattern.separator}
             <DateTimeNumberInput
-              // type={parsedPattern.parts![1].type}
               disabled={disabled}
-              className={cn({
-                "after:content-['-']": parsedPattern.separator === "-",
-                "after:content-['/']": parsedPattern.separator === "/",
-              })}
               min={parsedPattern.parts![1].min}
               max={parsedPattern.parts![1].max}
               label={parsedPattern.parts![1].label}
@@ -259,8 +251,8 @@ export const DateInput = ({
               }}
               onBlur={() => setFocused(false)}
             />
+            {parsedPattern.separator}
             <DateTimeNumberInput
-              // type={parsedPattern.parts![2].type}
               disabled={disabled}
               min={parsedPattern.parts![2].min}
               max={parsedPattern.parts![2].max}
@@ -291,7 +283,7 @@ export const DateInput = ({
             aria-required={!!required}
             name={name}
             // value={date()?.format(finalProps.pattern) ?? ""}
-            value={dateStrValue}
+            value={getDateStrValue(year, month, day)}
             onInput={(e) => {
               onInput?.(e);
             }}

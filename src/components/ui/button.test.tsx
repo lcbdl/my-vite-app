@@ -14,7 +14,7 @@ describe("Button Component", () => {
     render(
       <Button variant="danger" size="lg">
         Delete
-      </Button>
+      </Button>,
     );
     const button = screen.getByRole("button", { name: /delete/i });
     expect(button).toHaveClass("bg-red-700 text-white px-5 py-3 text-lg");
