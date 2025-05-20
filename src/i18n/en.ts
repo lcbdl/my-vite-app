@@ -1,5 +1,11 @@
 const en = {
   translation: {
+    common: {
+      to: "to",
+      close: "Close",
+      ok: "OK",
+      cancel: "Cancel",
+    },
     calendar: {
       weekday: {
         sunday: { label: "Sun", shortLabel: "Su", value: "Sunday" },
@@ -10,6 +16,22 @@ const en = {
         friday: { label: "Fri", shortLabel: "Fr", value: "Friday" },
         saturday: { label: "Sat", shortLabel: "Sa", value: "Saturday" },
       },
+      months: {
+        january: { label: "Jan", shortLabel: "Ja", value: "January", numValue: 1 },
+        february: { label: "Feb", shortLabel: "Fe", value: "February", numValue: 2 },
+        march: { label: "Mar", shortLabel: "Ma", value: "March", numValue: 3 },
+        april: { label: "Apr", shortLabel: "Ap", value: "April", numValue: 4 },
+        may: { label: "May", shortLabel: "Ma", value: "May", numValue: 5 },
+        june: { label: "Jun", shortLabel: "Ju", value: "June", numValue: 6 },
+        july: { label: "Jul", shortLabel: "Ju", value: "July", numValue: 7 },
+        august: { label: "Aug", shortLabel: "Au", value: "August", numValue: 8 },
+        september: { label: "Sep", shortLabel: "Se", value: "September", numValue: 9 },
+        october: { label: "Oct", shortLabel: "Oc", value: "October", numValue: 10 },
+        november: { label: "Nov", shortLabel: "No", value: "November", numValue: 11 },
+        december: { label: "Dec", shortLabel: "De", value: "December", numValue: 12 },
+      },
+      nextMonth: "Next month",
+      prevMonth: "Previous month",
       year: "Year",
       month: "Month",
       day: "Day",
@@ -17,6 +39,11 @@ const en = {
       minute: "Minute",
       second: "Second",
       invalidDateFormat: "Invalid date format, please use {{format}}",
+      showYears: "Show years",
+      chooseDate: "Choose date",
+      chooseTime: "Choose time",
+      date: "date",
+      today: "Today",
     },
   },
 };

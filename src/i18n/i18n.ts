@@ -12,6 +12,7 @@ const options = {
 };
 
 i18n.use(initReactI18next).init({
+  debug: true,
   supportedLngs: ["en", "fr"],
   lng: "en",
   detection: options,
