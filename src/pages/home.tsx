@@ -42,11 +42,22 @@ const HomePage = () => {
         <div className="grid w-full grid-cols-1 gap-6">
           <div>
             <h2 className="mb-3">Button</h2>
-            <div className="my-3 grid items-center gap-4 rounded-lg border border-solid border-gray-500 bg-gray-800 p-5 shadow-lg shadow-gray-500/25 sm:flex">
+            <div className="my-3 grid items-center gap-4 rounded-lg border border-solid border-gray-500 p-5 shadow-lg shadow-gray-500/25 sm:flex">
               <Button variant="primary">Primary</Button>
               <Button variant="secondary">Secondary</Button>
               <Button variant="danger">Danger</Button>
               <Button variant="ghost">Ghost</Button>
+            </div>
+            <div className="my-3 grid items-center gap-4 rounded-lg border border-solid border-gray-500 p-5 shadow-lg shadow-gray-500/25 sm:flex">
+              <Button variant="primary" size="lg">
+                Primary Large
+              </Button>
+              <Button variant="primary" size="md">
+                Secondary Middium
+              </Button>
+              <Button variant="primary" size="sm">
+                Danger Small
+              </Button>
             </div>
           </div>
         </div>

@@ -34,11 +34,11 @@ export const DateTimeNumberInput = ({
   const spanRef = useRef<HTMLSpanElement>(null);
 
   const [internalValue, setInternalValue] = useState(value);
+
   const displayValue = useMemo(
     () => (internalValue === undefined ? pattern : zeroPad(internalValue, pattern.length)),
     [internalValue, pattern],
   );
-  const regx = new RegExp(`^(?:${pattern})?(\\d+)$`);
 
   useEffect(() => {
     setInternalValue(value);
