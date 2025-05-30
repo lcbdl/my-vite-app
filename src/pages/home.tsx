@@ -50,13 +50,13 @@ const HomePage = () => {
             </div>
             <div className="my-3 grid items-center gap-4 rounded-lg border border-solid border-gray-500 p-5 shadow-lg shadow-gray-500/25 sm:flex">
               <Button variant="primary" size="lg">
-                Primary Large
+                Large
               </Button>
               <Button variant="primary" size="md">
-                Secondary Middium
+                Middium
               </Button>
               <Button variant="primary" size="sm">
-                Danger Small
+                Small
               </Button>
             </div>
           </div>

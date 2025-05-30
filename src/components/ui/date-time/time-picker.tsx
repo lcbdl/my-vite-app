@@ -56,7 +56,7 @@ export const TimePicker = ({
     if (showTimePicker) {
       const handleClickOutside = (event: MouseEvent) => {
         if (timePickerRef.current && !timePickerRef.current.contains(event.target as Node)) {
-          hideTimePicker();
+          handleCancelSelect();
         }
       };
 
@@ -127,7 +127,7 @@ export const TimePicker = ({
     }
   };
 
-  const handleCancelClick = () => {
+  const handleCancelSelect = () => {
     hideTimePicker();
     if (isValidTime(selectedTime)) {
       const [h, m] = selectedTime.split(":");
@@ -223,7 +223,7 @@ export const TimePicker = ({
         break;
 
       case "Escape":
-        hideTimePicker();
+        handleCancelSelect();
         break;
     }
   };
@@ -353,7 +353,7 @@ export const TimePicker = ({
               <Button size="sm" type="button" disabled={!hour || !minute} onClick={() => handleSelectTime()}>
                 {i18next.t("common.ok")}
               </Button>
-              <Button type="button" size="sm" variant="danger" onClick={() => handleCancelClick()}>
+              <Button type="button" size="sm" variant="danger" onClick={() => handleCancelSelect()}>
                 {i18next.t("common.cancel")}
               </Button>
             </div>
