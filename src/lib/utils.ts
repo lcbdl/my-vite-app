@@ -6,19 +6,15 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-// eslint-disable-next-line
-export function debounce<T extends (...args: any[]) => void>(
-  callback: T,
-  timeout: number,
-): (...args: Parameters<T>) => void {
+export const debounce = (callback: (...args: any[]) => void, timeout: number) => {
   let timer: number | null = null;
-  return (...args: Parameters<T>): void => {
+  return (...args: any[]) => {
     if (timer !== null) {
       clearTimeout(timer);
     }
     timer = window.setTimeout(() => callback(...args), timeout);
   };
-}
+};
 
 export const delay = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
